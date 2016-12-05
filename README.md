@@ -1,6 +1,10 @@
 # SKetch2D Reference Guide
 
-> Author: 焦紫顺  Email: emengjzs@163.com
+> Contributors:    Ziseon  emengjzs@163.com    Zak Penn [microsmadiopenn@gmail.com](mailto:microsmadiopenn@gmail.com)
+>
+> Documents:      Ziseon  
+
+
 
 ## 1. 总览
 
@@ -45,7 +49,7 @@ python cocos.py new Sketch2D -p cn.edu.nju.software.sketch -l cpp -d ~/Desktop
 git clone https://github.com/mspenn/Sketch2D.git Sketch2D-src
 ```
 
-
+将`Sketch2D-src/Classes`下所有的文件复制到
 
 
 
