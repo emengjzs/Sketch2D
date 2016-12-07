@@ -17,6 +17,24 @@
 
 SKetch2D 是一个基于`Cocos2d`并结合手势识别技术的物理演示程序。它预设了多种物理模型，并提供手写识别设置，用户可以通过触控笔、鼠标或其他设备描绘物理模型，并根据现实中的物理规律对模型进行演示。本文档旨在对该演示程序的配置、原理、实现做简单介绍。
 
+在程序中，默认提供了如下的物理模型或特性设置：
+```
+// mesh  物体模型
+#define GT_MESH_TRIANGLE	    "Triangle"        // 三角形
+#define GT_MESH_RECTANGLE	    "Rectangle"       // 矩形
+#define GT_MESH_CIRCLE        "Circle"          // 圆形
+#define GT_MESH_GROOVE		    "Groove"          // 凹槽
+#define GT_MESH_PAWN		      "Pawn"            // 人
+#define GT_MESH_PISTAL		    "Pistal"          // 枪，可发子弹
+#define GT_MESH_SWORD		      "Sword"           // 剑
+// mark  属性标记
+#define GT_MARK_STATIC		    "Static"          // 设置物体为静态（不受重力影响）
+#define GT_MARK_DELETE		    "Delete"          // 删除物体
+#define GT_MARK_CHECK		      "Check"           // 设置控制物体，可使用键盘操作物体
+```
+
+
+
 ![Shooter](image/Shooter.png)
 
 ### 文档总览
@@ -260,10 +278,12 @@ $1是针对一笔画的二维图案的简单识别，它不事先对样本进行
 ### 多线程处理
 由于cocos2d的渲染调度器使用一个单线程循环实现的，所以在涉及到多线程对节点的操作时，需要使用Director提供的接口：
 ```C++
-	Director::getInstance()->getScheduler()->performFunctionInCocosThread([&](){
-		EventCustom e(EVENT_LOADING_TEMPLATE);
-		LoadTemplateData ltd(loadingProgress, string("Activating Templates..."));
-		e.setUserData((void*)&ltd);
-		_eventDispatcher->dispatchEvent(&e);
-	});
+Director::getInstance()->getScheduler()->performFunctionInCocosThread([&](){
+  EventCustom e(EVENT_LOADING_TEMPLATE);
+  LoadTemplateData ltd(loadingProgress, string("Activating Templates..."));
+  e.setUserData((void*)&ltd);
+  _eventDispatcher->dispatchEvent(&e);
+});
 ```
+
+
