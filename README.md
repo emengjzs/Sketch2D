@@ -221,19 +221,25 @@ UI组件一般有如下一些通用方法：
 
 详细内容请见 [这里](http://www.cocos.com/docs/native/v3/scheduler/zh.html)
 
+### 物理模型
+
+cocos2dx 提供了物理模型的支持，cocos2d中通过在`Node`相关类上提供相应函数来设置是否应用物理引擎。物理世界被融入到Scene中，即当创建一个场景时，就可以指定这个场景是否使用物理引擎。对Sprite，可以通过`setPhysicsBody`设置物理属性，包括质量、密度、摩擦力等。对于碰撞检测，可以通过添加监听函数获取碰撞信息。
+
+更详细的内容可以参考 [这里](http://blog.csdn.net/cbbbc/article/details/38541099)
+
 ## 4. $1 与 \$N
 
 \$1, \$N与\$P是Washington实验组研究出的关于手势识别的算法，三个基于不同的假设和方法实现对二维图案的识别。相关信息发表在http://depts.washington.edu/aimgroup/proj/dollar/index.html上。
 
 $1是针对一笔画的二维图案的简单识别，它不事先对样本进行训练，换言之，它是一个lazy learner，使用最近邻居的分类算法（nearest-neighbor classifier ）寻找样本集中最接近于待分类图案的图形。它对样本和图案进行数据标准化（即数据转换）以提高匹配率。它将图案进行重采样，使得图案的线条是较为均匀的，之后，旋转图案，使得样本描绘的第一个点（即画的起始位置）和图案质心的连线都在同一个水平线上，对于待分类图案，也和样本进行重采样和旋转处理。之后，计算两者的相似度score，相似度以两者的“距离”进行度量，距离越大，score越小，表明两者越不相似。距离通过计算平均组成图案的对应各个点之间的欧氏距离得出。通过这种量化，找出样本中score最大的图案，即将待测图案归类为该图案。
 
-![$1-1](D:\Program\Git\Sketch2D-src\image\$1-1.png)
+![$1-1](image\$1-1.png)
 
-![$1-2](D:\Program\Git\Sketch2D-src\image\$1-2.png)
+![$1-2](image\$1-2.png)
 
 \$N 是基于$1改进的可以识别多笔画的二维图案识别，和\$1一样，同样采取最近邻居的分类算法和欧氏距离计算两个图案的相似度，所不同的是，为了提高匹配率，算法根据笔画顺序以及图案四个方向对样例进行枚举，产生所有图案相同但笔画顺序和图案方向不同的样例集，这样针对输入图案相同但笔画顺序不一样的情况，该算法可以进行兼容并得出相应图案类别，一个待分类图案与样例集的“距离”定义为样例集中与待分类图案“距离”的最小值。
 
-![$N](D:\Program\Git\Sketch2D-src\image\$N.png)
+![$N](image\$N.png)
 
 具体算法细节和研究成果请参阅[这里](http://depts.washington.edu/aimgroup/proj/dollar/index.html)所发表的文献。
 
@@ -243,5 +249,21 @@ $1是针对一笔画的二维图案的简单识别，它不事先对样本进行
 
 由于cocos2dx对凹多边形的模型建立有问题（可能由于判断一个点是否在一个凹多边形内比较麻烦，用于物理模型中的碰撞检测），因此，对于凹多边形的物理图案，在建模时，需要把它转换为凸多边形。
 
+转换凹多边形有两种方法，第一种是将多边形分割为多个三角形；第二种是直接在多边形的基础上计算出凸包作为物理模型。本程序实现上使用第二种。需要注意的是，在使用第二种方法时需要将边界点按照时针顺序排序，否则计算凸包时可能遇到困难。
 
+### 碰撞检测
 
+详见物理模型部分
+
+### 刚性物体
+
+### 多线程处理
+由于cocos2d的渲染调度器使用一个单线程循环实现的，所以在涉及到多线程对节点的操作时，需要使用Director提供的接口：
+```C++
+	Director::getInstance()->getScheduler()->performFunctionInCocosThread([&](){
+		EventCustom e(EVENT_LOADING_TEMPLATE);
+		LoadTemplateData ltd(loadingProgress, string("Activating Templates..."));
+		e.setUserData((void*)&ltd);
+		_eventDispatcher->dispatchEvent(&e);
+	});
+```
